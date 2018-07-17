@@ -63,6 +63,10 @@ func Load(dir, partialDir, layout string, funcs template.FuncMap) (Templates, er
 	}
 
 	err = filepath.Walk(partialDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
 		if info.IsDir() {
 			return nil
 		}
@@ -89,11 +93,15 @@ func Load(dir, partialDir, layout string, funcs template.FuncMap) (Templates, er
 		return nil
 	})
 
-	if err != nil {
+	if err != nil && !os.IsNotExist(err) {
 		return nil, fmt.Errorf("Failed to load partials: %v", err)
 	}
 
 	err = filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
 		if info.IsDir() {
 			return nil
 		}
